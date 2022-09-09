@@ -112,6 +112,6 @@ contract Attack{
 ```
 ## How To Prevent Reentracy Attack?
 
+As I mentioned in the analysis part, the order of transactions in the ```withdraw()``` function is constructed with a wrong point of view. Therefore, if the transaction order is made like this wasy, the reentracy vulnerability will die out.
 
-
-**_wasny0ps_**
+**_by wasny0ps_**
