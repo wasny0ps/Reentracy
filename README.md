@@ -112,6 +112,15 @@ contract Attack{
 ```
 ## How To Prevent Reentracy Attack?
 
-As I mentioned in the analysis part, the order of transactions in the ```withdraw()``` function is constructed with a wrong point of view. Therefore, if the transaction order is made like this wasy, the reentracy vulnerability will die out.
+As I mentioned in the analysis part, the order of transactions in the ```withdraw()``` function is constructed with a wrong point of view. Therefore, if the transaction order is made like this way, the reentracy vulnerability will die out.
+
+```
+function withdraw(uint _amount) external payable {
+        require(getBalance(msg.sender) >= _amount);
+        userFunds[msg.sender] -= _amount;
+        msg.sender.call{value: _amount}("");
+        userFunds[commissionCollector] += _amount/100;
+    }
+```
 
 **_by wasny0ps_**
