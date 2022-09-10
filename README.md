@@ -119,7 +119,7 @@ contract Attack{
     }
 }
 ``` 
-## 🕸 Attack
+## 🕸 Assault
 I use **brownie framework** in *vísual studio code terminal* while attacking that's why I create new project with brownie and add files.
 ```
 brownie init
