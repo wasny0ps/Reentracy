@@ -92,7 +92,7 @@ contract BasicBank {
 ## 🔎 Analyze
 ## 🕸 Attack
 
-Let's start with importing BasicBank.sol file which is in the same directory. After that, I create new BasicBank object named target and use ```constructor()``` function for which learn target contract address. Arrive second step, at least one ether must be deposited to make a transaction on the target contract.So, I had called deposit() function from target contract and withdrew it. Before attack function, we must add ```fallback()``` function. Shortly, fallback function only works when external payment comes into contract.
+Let's start with importing BasicBank.sol file which is in the same directory. After that, I create new BasicBank object named target and use ```constructor()``` function for which learn target contract address. Arrive second step, at least one ether must be deposited to make a transaction on the target contract.So, I had called deposit() function from target contract and withdrew it. The only thing for coffe break, we must add ```fallback()``` function. Shortly, fallback function only works when external payment comes into contract. When external payment comes into attack contract from target, call withdraw function from target again until target balance's less than 1 ether. Thus, our attack contract will have withdrew all money in bank.
 ```
 //SPDX-License-Identifier: MIT
 pragma solidity 0.7.0;
