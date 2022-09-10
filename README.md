@@ -90,7 +90,8 @@ contract BasicBank {
 }
 ```
 ## 🔎 Analyze
-## 🕷 A Closer Look At Attack Contract
+Although there are many vulnerabilities in this smart contract, we should focus on the ```withdraw()``` function to find the reason for the reentracy vulnerability. Function start with a control about user balance who want to make a draft from bank. Then, there is an order of transactions which are exploitable with reentrancy attack. The reason why this code snippet is vulnerable is that the user withdraws money without updating his/her balance.As a result, the attacker can constantly call withdrawals to his own account without the balance update process.
+## 🕷 A Closer Look at the Attack Contract
 
 Let's start with importing BasicBank.sol file which is in the same directory. After that, I create new BasicBank object named target and use ```constructor()``` function for which learn target contract address. Arrive second step, at least one ether must be deposited to make a transaction on the target contract.So, I had called deposit() function from target contract and withdrew it. The only thing for coffe break, we must add ```fallback()``` function. Shortly, fallback function only works when external payment comes into contract. When external payment comes into attack contract from target, call withdraw function from target again until target balance's less than 1 ether. Thus, our attack contract will have withdrew all money in bank.
 ```
