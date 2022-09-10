@@ -87,7 +87,7 @@ contract BasicBank {
     }
 }
 ```
-## 🔎 Analyze
+## 🔎 Analysis
 Although there are many vulnerabilities in this smart contract, we should focus on the ```withdraw()``` function to find the reason for the reentracy vulnerability. Function start with a control about user balance who want to make a draft from bank. Then, there is an order of transactions which are exploitable with reentrancy attack. The reason why this code snippet is vulnerable is that the user withdraws money without updating his/her balance.As a result, the attacker can constantly call withdrawals to his own account without the balance update process.
 ## 🕷 A Closer Look at the Attack Contract
 
@@ -198,7 +198,7 @@ Transaction sent: 0xa139f01266d62f4d82ccd46fb5dc143582c23052f9c9e40026e2091ae225
 ```
 ## 🤝 How To Prevent Reentracy Attack?
 
-As I mentioned in the analyze part, the order of transactions in the ```withdraw()``` function is constructed with a wrong point of view. Therefore, if the transaction order is made like this way, the reentracy vulnerability will die out. What is more, when you use ```call()```, you should limit the gas fee.
+As I mentioned in the analysis part, the order of transactions in the ```withdraw()``` function is constructed with a wrong point of view. Therefore, if the transaction order is made like this way, the reentracy vulnerability will die out. What is more, when you use ```call()```, you should limit the gas fee.
 
 ```
 function withdraw(uint _amount) external payable {
