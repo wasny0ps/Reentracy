@@ -6,7 +6,7 @@ The Reentrancy attack is one of the most destructive attacks in the Solidity sma
 
 When the contract fails to update its state before sending funds, the attacker can continuously call the withdraw function to drain the contract’s funds. A famous real-world Reentrancy attack is the DAO attack which caused a loss of 60 million US dollars.
 
-## How Does Reentracy Attack Work?
+## 💻 How Does Reentracy Attack Work?
 <img src='https://github.com/wasny0ps/Reentracy/blob/main/img/reentracy.png'>
 
 ## 🎬 Reentrancy Attack Scenario
@@ -85,8 +85,8 @@ contract BasicBank {
     }
 }
 ```
-## 👨‍💻 Analyzing
-## Attacking
+## 🔎 Analyzing
+## 🕸 Attacking
 ```
 //SPDX-License-Identifier: MIT
 pragma solidity 0.7.0;
@@ -122,5 +122,9 @@ function withdraw(uint _amount) external payable {
         userFunds[commissionCollector] += _amount/100;
     }
 ```
+
+
+
+
 
 **_by wasny0ps_**
