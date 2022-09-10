@@ -198,7 +198,7 @@ Transaction sent: 0xa139f01266d62f4d82ccd46fb5dc143582c23052f9c9e40026e2091ae225
 ```
 ## 🤝 How To Prevent Reentracy Attack?
 
-As I mentioned in the analysis part, the order of transactions in the ```withdraw()``` function is constructed with a wrong point of view. Therefore, if the transaction order is made like this way, the reentracy vulnerability will die out. What is more, when you use ```call()```, you should limit the gas fee.
+As I mentioned in the analysis part, the order of transactions in the ```withdraw()``` function is constructed with a wrong point of view.What is more, when you use ```call()```, you should limit the gas fee.Therefore, if the transaction order is made like this way, the reentracy vulnerability will die out.
 
 ```
 function withdraw(uint _amount) external payable {
