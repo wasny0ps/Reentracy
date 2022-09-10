@@ -93,7 +93,7 @@ contract BasicBank {
 Although there are many vulnerabilities in this smart contract, we should focus on the ```withdraw()``` function to find the reason for the reentracy vulnerability. Function start with a control about user balance who want to make a draft from bank. Then, there is an order of transactions which are exploitable with reentrancy attack. The reason why this code snippet is vulnerable is that the user withdraws money without updating his/her balance.As a result, the attacker can constantly call withdrawals to his own account without the balance update process.
 ## 🕷 A Closer Look at the Attack Contract
 
-Let's start with importing BasicBank.sol file which is in the same directory. After that, I create new BasicBank object named target and use ```constructor()``` function for which learn target contract address. Arrive second step, at least one ether must be deposited to make a transaction on the target contract.So, I had called deposit() function from target contract and withdrew it. The only thing for coffe break, we must add ```fallback()``` function. Shortly, fallback function only works when external payment comes into contract. When external payment comes into attack contract from target, call withdraw function from target again until target balance's less than 1 ether. Thus, our attack contract will have withdrew all money in bank.
+Let's start with importing BasicBank.sol file which is in the same directory. After that, I create new BasicBank object named target and use ```constructor()``` function for which learn target contract address. Arrive second step, at least one ether must be deposited to make a transaction on the target contract.So, I had called deposit() function from target contract and withdrew it. The only thing for coffe break, we must add ```fallback()``` function. Shortly, fallback function only works when external payment comes into contract. When external payment comes into attack contract from target, call withdraw function from target again and again until target balance's less than 1 ether. Thus, our attack contract will have withdrew all money in bank.
 ```
 //SPDX-License-Identifier: MIT
 pragma solidity 0.7.0;
@@ -183,7 +183,7 @@ Transaction sent: 0xd57f8472a3a7668108ae62f7d52a82180fb7a0ea664090bb2b42d06bf7a6
   Attack.constructor confirmed   Block: 3   Gas used: 204880 (1.71%)
   Attack deployed at: 0xe7CB1c67752cBb975a56815Af242ce2Ce63d3113
 ```
-And reentracy!
+And reentracy! We succesfully hacked this smart contract.
 ```
 >>> reentracy.attack({'from': accounts[1], 'value':1e18})
 Transaction sent: 0xa139f01266d62f4d82ccd46fb5dc143582c23052f9c9e40026e2091ae2257923
@@ -198,18 +198,19 @@ Transaction sent: 0xa139f01266d62f4d82ccd46fb5dc143582c23052f9c9e40026e2091ae225
 >>> bank.balance()
 0
 ```
-## 🤝  How To Prevent Reentracy Attack?
+## 🤝 How To Prevent Reentracy Attack?
 
-As I mentioned in the analysis part, the order of transactions in the ```withdraw()``` function is constructed with a wrong point of view. Therefore, if the transaction order is made like this way, the reentracy vulnerability will die out.
+As I mentioned in the analyze part, the order of transactions in the ```withdraw()``` function is constructed with a wrong point of view. Therefore, if the transaction order is made like this way, the reentracy vulnerability will die out. What is more, when you use ```call()```, you should limit the gas fee.
 
 ```
 function withdraw(uint _amount) external payable {
         require(getBalance(msg.sender) >= _amount);
         userFunds[msg.sender] -= _amount;
-        msg.sender.call{value: _amount}("");
+        msg.sender.call{value: _amount}("8600");
         userFunds[commissionCollector] += _amount/100;
 }
 ```
+
 
 
 
