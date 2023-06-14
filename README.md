@@ -1,15 +1,15 @@
-# Reentracy Attack
+# Reentrancy Attack
 ## 🗺️ Overview 
 The Reentrancy attack is one of the most destructive attacks in the Solidity smart contract. A reentrancy attack occurs when a function makes an external call to another untrusted contract. Then the untrusted contract makes a recursive call back to the original function in an attempt to drain funds.
 
 When the contract fails to update its state before sending funds, the attacker can continuously call the withdraw function to drain the contract’s funds. A famous real-world Reentrancy attack is the DAO attack which caused a loss of 60 million US dollars.
 
-## 💻 How Does Reentracy Attack Work?
+## 💻 How Does Reentrancy Attack Work?
 In simple terms, a reentrancy attack occurs between two smart contracts, where an attacking smart contract exploits the code in a vulnerable contract to drain it of its funds. The exploit works by having the attacking smart contract repeatedly call the withdraw function before the vulnerable smart contract has had time to update the balance.
 
 This is only possible because of the order in which the smart contract is set up to handle transactions, with the vulnerable smart contract first checking the balance, then sending the funds, and then finally updating its balance. The time between sending the funds and updating the balance creates a window in which the attacking smart contract can make another call to withdraw its funds, and so the cycle continues until all the funds are drained.
 
-<img src='https://github.com/wasny0ps/Reentracy/blob/main/img/reentracy.png'>
+<img src='https://github.com/wasny0ps/Reentrancy/blob/main/img/reentrancy.png'>
 
 ## 🎬 Reentrancy Attack Scenario
 1> The vulnerable smart contract has 10 eth.
