@@ -26,7 +26,7 @@ Transfer 1 eth to a malicious contract. (Note: attacker balance has NOT been upd
 
 Fallback function on received eth calls withdraw function again.
 
-5> Now withdraw function will verify if it can be executed:
+4> Now withdraw function will verify if it can be executed:
 
 Does the attacker have 1 eth on their balance? Yes – because the balance has not been updated.
 
