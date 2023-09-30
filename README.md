@@ -104,7 +104,7 @@ contract Attack{
     BasicBank public target;
     
     constructor(address payable _target){
-        target = BasicBank4(_target);
+        target = BasicBank(_target);
     }
     
     function attack() external payable{
